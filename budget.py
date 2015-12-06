@@ -3,7 +3,7 @@
 budget_menu = 0
 budget_income = []
 budget_expense =[]
-while budget_menu != 7:
+while budget_menu != 9:
 	print "--------------------------"
 	print "1. Add Income"
 	print "2. Remove Income"
@@ -11,7 +11,9 @@ while budget_menu != 7:
 	print "4. Remove Expenses"
 	print "5. Totals"
 	print "6. Save Report"
-	print "7. Exit"
+	print "7. Load Report"
+        print "8. List Items"
+	print "9. Exit"
 	budget_menu = input("Pick an item from the menu: ")
 	
 	if budget_menu == 1:
@@ -79,4 +81,39 @@ while budget_menu != 7:
                 out_file.write("The total amount of expenses is: " + str(sum_exp) + "\n")
                 out_file.write("The total amount leftover is: " + str(sum_leftover))
                 out_file.close()         
-                
+
+        elif budget_menu == 7:
+                filename = raw_input("File name to load: ")
+                in_file = open(filename, "r")
+                state = 0
+                for line in in_file:
+                        if state == 0:
+                                if line == "INCOME:\n":
+                                        state = 1
+                        elif state == 1:
+                                if line == "EXPENSES:\n":
+                                        state = 2
+                                else:
+                                        splitstring = line.split(": ")
+                                        inc_name = splitstring[0]
+                                        inc_amount = float(splitstring[1])
+                                        budget_income.append((inc_name, inc_amount))
+                        elif state == 2:
+                                if line == "TOTALS:\n":
+                                        state = 3
+                                else:
+                                        splitstring = line.split(": ")
+                                        exp_name = splitstring[0]
+                                        exp_amount = float(splitstring[1])
+                                        budget_expense.append((exp_name, exp_amount))
+                        else:
+                                break
+                in_file.close()
+
+        elif budget_menu == 8:
+                print ("Budget Report" + "\n" + "INCOME:" + "\n")
+                for (inc_name, inc_amount) in budget_income:
+                        print ( inc_name + ": " + str(inc_amount) + "\n")
+                print ("EXPENSES:" + "\n")
+                for (exp_name, exp_amount) in budget_expense:
+                        print (exp_name + ": " + str(exp_amount) + "\n")                        
